@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>なぞり書き練習プリント</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500&display=swap');
+        
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #333;
+        }
+        
+        .input-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f9f9f9;
+            border-radius: 8px;
+        }
+        
+        .input-group {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        label {
+            font-weight: 500;
+            min-width: 100px;
+            color: #555;
+        }
+        
+        input[type="text"] {
+            flex: 1;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            font-family: 'Noto Sans JP', sans-serif;
+        }
+        
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #4CAF50;
+        }
+        
+        button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            font-family: 'Noto Sans JP', sans-serif;
+            transition: background 0.3s;
+        }
+        
+        button:hover {
+            background: #45a049;
+        }
+        
+        .print-area {
+            background: white;
+            margin-top: 30px;
+            padding: 10mm;
+            border: 2px solid #ddd;
+            width: 210mm;
+            min-height: 297mm;
+            position: relative;
+            page-break-after: always;
+        }
+        
+        .name-section {
+            position: absolute;
+            top: 5mm;
+            right: 3mm;
+            writing-mode: vertical-rl;
+            text-orientation: mixed;
+            font-size: 12px;
+            color: #333;
+            padding: 5px;
+            border: 2px solid #333;
+            border-radius: 5px;
+            width: 12mm;
+            height: 80mm;
+            z-index: 10;
+        }
+        
+
+        
+        .practice-content {
+            margin-right: 20mm;
+            display: flex;
+            flex-direction: row-reverse;
+            gap: 5mm;
+            height: 100%;
+            align-items: flex-start;
+            padding-top: 5mm;
+            flex-wrap: wrap;
+        }
+        
+        .character-set {
+            display: flex;
+            gap: 3mm;
+            align-items: flex-start;
+            page-break-inside: avoid;
+        }
+        
+        .practice-column {
+            writing-mode: horizontal-tb;
+            text-orientation: upright;
+            font-size: 36px;
+            line-height: 1.0;
+            height: 275mm;
+            position: relative;
+            border: 2px solid #ddd;
+            width: 20mm;
+            padding: 2mm;
+            background: #fafafa;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .trace-column {
+            color: #bbb;
+            font-weight: 300;
+            position: relative;
+            background: #f9f9f9;
+        }
+        
+        .practice-column-empty {
+            background: white;
+            position: relative;
+        }
+        
+        .character-box {
+            width: 19mm;
+            height: 20mm;
+            border: 1px solid #e0e0e0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            margin-bottom: 0.5mm;
+            font-size: 36px;
+        }
+        
+        .character-box::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 1px;
+            height: 100%;
+            background: #f0f0f0;
+        }
+        
+        .character-box::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            transform: translateY(-50%);
+            width: 100%;
+            height: 1px;
+            background: #f0f0f0;
+        }
+        
+        .small-character {
+            font-size: 24px !important;
+            position: absolute;
+            top: 3mm;
+            right: 3mm;
+        }
+        
+        .punctuation {
+            font-size: 20px !important;
+            position: absolute;
+            top: 2mm;
+            right: 2mm;
+        }
+        
+        .page {
+            width: 210mm;
+            min-height: 297mm;
+            margin-bottom: 20mm;
+            page-break-after: always;
+            position: relative;
+        }
+        
+        .page:last-child {
+            page-break-after: auto;
+        }
+        
+        .grid-lines {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        .grid-line {
+            position: absolute;
+            left: 0;
+            right: 120px;
+            height: 1px;
+            background: #f0f0f0;
+        }
+        
+        .controls {
+            margin-top: 20px;
+            text-align: center;
+        }
+        
+        .print-button {
+            background: #2196F3;
+            margin-left: 10px;
+        }
+        
+        .print-button:hover {
+            background: #1976D2;
+        }
+        
+        @media print {
+            body {
+                background: white;
+                margin: 0;
+                padding: 0;
+            }
+            
+            .header, .input-section, .controls {
+                display: none;
+            }
+            
+            .container {
+                box-shadow: none;
+                border: none;
+                padding: 0;
+                margin: 0;
+                max-width: none;
+            }
+            
+            .print-area {
+                border: none;
+                padding: 0;
+                margin: 0;
+                min-height: auto;
+                width: 210mm;
+                height: 297mm;
+            }
+            
+            .page {
+                page-break-after: always;
+                width: 210mm;
+                height: 297mm;
+                margin: 0;
+            }
+            
+            .page:last-child {
+                page-break-after: auto;
+            }
+            
+            @page {
+                margin: 0;
+                size: A4;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>なぞり書き練習プリント作成</h1>
+            <p>小学校1年生向け</p>
+        </div>
+        
+        <div class="input-section">
+            <div class="input-group">
+                <label for="textInput">練習する文字：</label>
+                <input type="text" id="textInput" placeholder="ひらがな・カタカナ・漢字を入力してください" maxlength="156">
+            </div>
+            <button onclick="generatePrint()">プリントを作成</button>
+        </div>
+        
+        <div class="print-area" id="printArea">
+            <div class="practice-content" id="practiceContent">
+                <div style="text-align: center; color: #999; margin-top: 200px; font-size: 18px;">
+                    上の入力欄に文字を入力して「プリントを作成」ボタンを押してください
+                </div>
+            </div>
+            
+            <div class="grid-lines" id="gridLines"></div>
+        </div>
+        
+        <div class="controls">
+            <button onclick="clearPrint()">クリア</button>
+            <button class="print-button" onclick="printPage()">印刷</button>
+        </div>
+    </div>
+
+    <script>
+        function generatePrint() {
+            const text = document.getElementById('textInput').value.trim();
+            
+            if (!text) {
+                alert('練習する文字を入力してください');
+                return;
+            }
+            
+            const practiceContent = document.getElementById('practiceContent');
+            const gridLines = document.getElementById('gridLines');
+            
+            // コンテンツをクリア
+            practiceContent.innerHTML = '';
+            gridLines.innerHTML = '';
+            
+            // 文字を配列に分割
+            const characters = Array.from(text);
+            
+            // 小さな文字と句読点を判定する関数
+            function isSmallCharacter(char) {
+                return 'っゃゅょァィゥェォャュョッ'.includes(char);
+            }
+            
+            function isPunctuation(char) {
+                return '、。！？,.!?'.includes(char);
+            }
+            
+            const charactersPerLine = 13;
+            const linesPerPage = 6;
+            let currentPage = 0;
+            let currentLine = 0;
+            
+            // ページを作成する関数
+            function createPage() {
+                const page = document.createElement('div');
+                page.className = 'page';
+                
+                // 名前欄を各ページに追加
+                const nameSection = document.createElement('div');
+                nameSection.className = 'name-section';
+                nameSection.innerHTML = `
+                    <div style="margin-bottom: 3px; font-size: 10px;">なまえ</div>
+                `;
+                page.appendChild(nameSection);
+                
+                const pageContent = document.createElement('div');
+                pageContent.className = 'practice-content';
+                page.appendChild(pageContent);
+                
+                return { page, content: pageContent };
+            }
+            
+            let currentPageObj = createPage();
+            practiceContent.appendChild(currentPageObj.page);
+            
+            // 文字を13文字ずつに分割して行を作成
+            for (let i = 0; i < characters.length; i += charactersPerLine) {
+                // 6行を超えた場合は新しいページを作成
+                if (currentLine >= linesPerPage) {
+                    currentPageObj = createPage();
+                    practiceContent.appendChild(currentPageObj.page);
+                    currentLine = 0;
+                }
+                
+                const lineCharacters = characters.slice(i, i + charactersPerLine);
+                
+                // 文字セットを作成
+                const characterSet = document.createElement('div');
+                characterSet.className = 'character-set';
+                
+                // なぞり書き用の列
+                const traceColumn = document.createElement('div');
+                traceColumn.className = 'practice-column trace-column';
+                
+                // 練習用の列（空白）
+                const practiceColumn = document.createElement('div');
+                practiceColumn.className = 'practice-column practice-column-empty';
+                
+                // 各文字に対してマスを作成
+                lineCharacters.forEach((char, index) => {
+                    // なぞり書き用のマス
+                    const traceBox = document.createElement('div');
+                    traceBox.className = 'character-box';
+                    
+                    const traceChar = document.createElement('span');
+                    traceChar.textContent = char;
+                    
+                    // 小さな文字や句読点の位置調整
+                    if (isSmallCharacter(char)) {
+                        traceChar.className = 'small-character';
+                    } else if (isPunctuation(char)) {
+                        traceChar.className = 'punctuation';
+                    }
+                    
+                    traceBox.appendChild(traceChar);
+                    traceColumn.appendChild(traceBox);
+                    
+                    // 練習用のマス（空白）
+                    const practiceBox = document.createElement('div');
+                    practiceBox.className = 'character-box';
+                    practiceColumn.appendChild(practiceBox);
+                });
+                
+                characterSet.appendChild(traceColumn);
+                characterSet.appendChild(practiceColumn);
+                currentPageObj.content.appendChild(characterSet);
+                
+                currentLine++;
+            }
+        }
+        
+        function createGridLines() {
+            // グリッド線は各マスに組み込まれているため、この関数は不要
+        }
+        
+        function clearPrint() {
+            document.getElementById('textInput').value = '';
+            document.getElementById('practiceContent').innerHTML = `
+                <div style="text-align: center; color: #999; margin-top: 200px; font-size: 18px;">
+                    上の入力欄に文字を入力して「プリントを作成」ボタンを押してください
+                </div>
+            `;
+            document.getElementById('gridLines').innerHTML = '';
+        }
+        
+        function printPage() {
+            window.print();
+        }
+        
+        // エンターキーでプリント作成
+        document.getElementById('textInput').addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                generatePrint();
+            }
+        });
+    </script>
+</body>
+</html>
